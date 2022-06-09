@@ -1,3 +1,4 @@
+from functools import reduce
 import numpy as np
 
 def extract_vector(m:np.array, index:int):
@@ -44,3 +45,28 @@ def compute_feature(list_of_arrays:list, prefix=None) -> dict:
 
     return d
 
+
+import noisereduce as nr
+import librosa
+from scipy.io import wavfile
+
+def cleaned_file(filename:str, sample_rate:int, use_librosa:bool=True):
+    """return a signal cleaned with reduced noise
+
+    Args:
+        filename (str): name of the wav file to modify
+        sample_rate (int): sample rate used to sample the wav file
+        use_librosa (bool, optional): If True use librosa, if False use scipy.wav. Defaults to True.
+
+    Returns:
+        np.array: new signal
+    """
+    
+    if use_librosa:
+        signal, _ = librosa.load(filename, sr=sample_rate, res_type='kaiser_fast') # signal already normalized
+        norm_reduced_noise = nr.reduce_noise(y=signal, sr=sample_rate)
+        return norm_reduced_noise
+    else:
+        _, signal = wavfile.read(filename)
+        reduced_noise = nr.reduce_noise(y=signal, sr=sample_rate)
+        return reduced_noise
