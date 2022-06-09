@@ -46,10 +46,12 @@ def compute_feature(list_of_arrays:list, prefix=None) -> dict:
     return d
 
 
+##----Not used since didn't improve results----##
+#
 import noisereduce as nr
 import librosa
 from scipy.io import wavfile
-
+#
 def cleaned_file(filename:str, sample_rate:int, use_librosa:bool=True):
     """return a signal cleaned with reduced noise
 
@@ -65,8 +67,18 @@ def cleaned_file(filename:str, sample_rate:int, use_librosa:bool=True):
     if use_librosa:
         signal, _ = librosa.load(filename, sr=sample_rate, res_type='kaiser_fast') # signal already normalized
         norm_reduced_noise = nr.reduce_noise(y=signal, sr=sample_rate)
-        return norm_reduced_noise
+        return deal_nan_val(norm_reduced_noise)
     else:
         _, signal = wavfile.read(filename)
         reduced_noise = nr.reduce_noise(y=signal, sr=sample_rate)
-        return reduced_noise
+        return deal_nan_val(reduced_noise)
+#    
+def deal_nan_val(ary:np.array) -> np.array:
+    """ If one entry of the cleaned signal is nan, it is replaced with 0"""
+    if np.sum(np.isnan(ary)) != 0:
+        idxs = np.argwhere(np.isnan(ary)==True).reshape(-1,)
+        for id in idxs:
+            ary[id] = 0.
+    return ary
+#
+##----Not used since didn't improve results----##
