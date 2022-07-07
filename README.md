@@ -24,6 +24,7 @@ A folder containing all audio files were provided too.
 
 An inspection of development dataset showed that classes were imbalanced. Hence, oversampling was used.
 
+![class imbalance](https://github.com/notlosca/audio_emotion_classification/blob/main/images/num_samples_per_class.svg)
 
 # Features 
 Features used are the following:
